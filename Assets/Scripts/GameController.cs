@@ -18,6 +18,8 @@ public class GameController : MonoBehaviour {
 
 	private bool gameOver;
 	private bool restart;
+
+	private int waveCounter;
 	
 	void Start() {
 		Debug.Log ("Start GameController");
@@ -26,58 +28,47 @@ public class GameController : MonoBehaviour {
 		updateScore ();
 		gameOver = false;
 		restart = false;
-
 		restartText.text = "";
 		gameOverText.text = "";
+		waveCounter = 1;
 	}
 
 	IEnumerator spanwWaves(){
 
-
 		yield return new WaitForSeconds (startWait);
 
 		while (true) {
-			for(int i = 0; i < hazzardCount; i++){
-				
+			waveCounter++;
+			for(int i = 0; i < hazzardCount; i++){				
 				Vector3 spanwPosition = new Vector3 (Random.Range(-spanwValues.x, spanwValues.x), spanwValues.y, spanwValues.z);
 				Quaternion spanwRotation = Quaternion.identity;
-				Instantiate (hazzard, spanwPosition, spanwRotation);
+				GameObject hazzardClone = Instantiate (hazzard, spanwPosition,spanwRotation) as GameObject;
+				Mover mover = hazzardClone.GetComponent<Mover>();
+				Debug.Log("Wave counter "+waveCounter);
+				mover.speed = mover.speed*waveCounter;
 				yield return new WaitForSeconds (spawnWait);	
 			}
 			
 			yield return new WaitForSeconds (waveWait);	
 		
-		
 			if (gameOver == true) {
-			
-				restartText.text = "Press 'R' for Restart";
 				restart = true;
 				break;
 			}
-		
 		}
-
-	
 	}
 
 	void Update(){
 		if (restart == true) {
-			if (Input.GetKeyDown(KeyCode.R)) {
-				Application.LoadLevel(Application.loadedLevel);
-			
-			}
+			Application.LoadLevel (Application.loadedLevel);
 		}
-	
 	}
-
-
+	
 	void updateScore() {
 		scoreText.text = "Score " + score;
-	
 	}
 
 	public void addScore(int newScore) {
-	
 		score += newScore;
 		updateScore ();
 	}
@@ -86,11 +77,4 @@ public class GameController : MonoBehaviour {
 		gameOverText.text = "Game Over";
 		gameOver = true;
 	}
-
-
-
-
-
-
-
 }

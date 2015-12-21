@@ -25,6 +25,11 @@ public class DestroyByContact : MonoBehaviour {
     {
 		Debug.Log("OnTriggerEnter Asteroid -> "+other.gameObject.tag);
 
+		if (other.gameObject.tag == "EnemyShip") {
+			return ;
+		}
+
+
         if (other.gameObject.tag == "Boundary")
         {
             return;
